@@ -184,6 +184,14 @@ def send_message(recipient):
     return render_template('send_message.html', title=_('Send Message'),
                            form=form, recipient=recipient)
 
+@bp.route('/tools')
+@login_required
+def tools():
+    tools = [
+    {'name': 'Saw', 'description': 'Big saw'}, 
+    {'name': 'Hammer', 'description': 'Medium hammer'}
+        ]
+    return render_template('tools.html', title='Tools', user=user, tools=tools)
 
 @bp.route('/messages')
 @login_required

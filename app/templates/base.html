@@ -1,7 +1,7 @@
 {% extends 'bootstrap/base.html' %}
 
 {% block title %}
-    {% if title %}{{ title }} - Microblog{% else %}{{ _('Welcome to Microblog') }}{% endif %}
+    {% if title %}{{ title }} - Toolio{% else %}{{ _('Welcome to Toolio') }}{% endif %}
 {% endblock %}
 
 {% block navbar %}
@@ -14,7 +14,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="{{ url_for('main.index') }}">Microblog</a>
+                <a class="navbar-brand" href="{{ url_for('main.index') }}">Toolio</a>
             </div>
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
@@ -32,6 +32,7 @@
                     {% if current_user.is_anonymous %}
                     <li><a href="{{ url_for('auth.login') }}">{{ _('Login') }}</a></li>
                     {% else %}
+                    <li><a href="{{ url_for('main.tools') }}">{{ _('Tools') }}</a></li>
                     <li>
                         <a href="{{ url_for('main.messages') }}">{{ _('Messages') }}
                             {% set new_messages = current_user.new_messages() %}
