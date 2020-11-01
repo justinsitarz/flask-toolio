@@ -7,7 +7,7 @@ from guess_language import guess_language
 from app import db
 from app.main.forms import EditProfileForm, EmptyForm, PostForm, SearchForm, \
     MessageForm
-from app.models import User, Post, Message, Notification
+from app.models import User, Post, Message, Notification, Tool
 from app.translate import translate
 from app.main import bp
 
@@ -187,10 +187,12 @@ def send_message(recipient):
 @bp.route('/tools')
 @login_required
 def tools():
-    tools = [
-    {'name': 'Saw', 'description': 'Big saw'}, 
-    {'name': 'Hammer', 'description': 'Medium hammer'}
-        ]
+    # Retrieve tools owned by user
+    tools = Tool.query.filter_by(user_id=current_user.id)
+    # tools = [
+    # {'name': 'Saw', 'description': 'Big saw'}, 
+    # {'name': 'Hammer', 'description': 'Medium hammer'}
+    #     ]
     return render_template('tools.html', title='Tools', user=user, tools=tools)
 
 @bp.route('/messages')
