@@ -1,9 +1,13 @@
-    <table class="table table-hover">
-        <tr>
-            <td>
-                <span id="tool{{ tool.id }}">{{ tool.name }}</span>
-                <span id="tool{{ tool.id }}">{{ tool.description }}</span>
-                <br><br>
-            </td>
-        </tr>
-    </table>
+  		<div class="col-sm-6">    
+	        <div class="card" style="width: 18rem;">
+				<img class="card-img-top" src="{{ tool.image_path }}" alt="Card image cap">
+				<div class="card-body">
+					<h5 class="card-title">{{ tool.name }}</h5>
+					<p class="card-text">{{ tool.description }}</p>
+					<a href="#" class="btn btn-primary">Edit tool details</a>
+				</div>	
+			</div>
+		</div>
+
+
+

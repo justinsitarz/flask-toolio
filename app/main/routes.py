@@ -6,7 +6,7 @@ from flask_babel import _, get_locale
 from guess_language import guess_language
 from app import db
 from app.main.forms import EditProfileForm, EmptyForm, PostForm, SearchForm, \
-    MessageForm
+    MessageForm, AddToolForm
 from app.models import User, Post, Message, Notification, Tool
 from app.translate import translate
 from app.main import bp
@@ -103,6 +103,30 @@ def edit_profile():
     return render_template('edit_profile.html', title=_('Edit Profile'),
                            form=form)
 
+@bp.route('/add_tool', methods=['GET', 'POST'])
+@login_required
+def add_tool():
+    form = AddToolForm()
+    if form.validate_on_submit():
+        tool = Tool(name=form.name.data, owner=current_user,
+                    description=form.description.data,
+                    image_path=form.image_url.data)
+        db.session.add(tool)
+        db.session.commit()
+        flash(_('Your tool has been listed!'))
+        return redirect(url_for('main.tools'))
+    return render_template('add_tool.html', title='Add a tool', form=form)
+
+@bp.route('/tool/delete/<int:tool_id>', methods=['POST'])
+@login_required
+def delete_tool(tool_id):
+    print(tool_id)
+    tool = Tool.query.get_or_404(tool_id)
+    db.session.delete(tool)
+    db.session.commit()
+    flash('Item deleted.')
+    return redirect(url_for('main.tools'))
+
 
 @bp.route('/follow/<username>', methods=['POST'])
 @login_required
@@ -189,11 +213,9 @@ def send_message(recipient):
 def tools():
     # Retrieve tools owned by user
     tools = Tool.query.filter_by(user_id=current_user.id)
-    # tools = [
-    # {'name': 'Saw', 'description': 'Big saw'}, 
-    # {'name': 'Hammer', 'description': 'Medium hammer'}
-    #     ]
     return render_template('tools.html', title='Tools', user=user, tools=tools)
+
+
 
 @bp.route('/messages')
 @login_required
