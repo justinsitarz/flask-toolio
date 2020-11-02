@@ -6,7 +6,7 @@ from flask_babel import _, get_locale
 from guess_language import guess_language
 from app import db
 from app.main.forms import EditProfileForm, EmptyForm, PostForm, SearchForm, \
-    MessageForm, AddToolForm
+    MessageForm, AddToolForm, EditToolForm
 from app.models import User, Post, Message, Notification, Tool
 from app.translate import translate
 from app.main import bp
@@ -120,13 +120,32 @@ def add_tool():
 @bp.route('/tool/delete/<int:tool_id>', methods=['POST'])
 @login_required
 def delete_tool(tool_id):
-    print(tool_id)
     tool = Tool.query.get_or_404(tool_id)
     db.session.delete(tool)
     db.session.commit()
     flash('Item deleted.')
     return redirect(url_for('main.tools'))
 
+@bp.route('/edit_tool', methods=['GET', 'POST'])
+@login_required
+def edit_tool():
+    tool_id = 1
+    tool = Tool.query.filter_by(id=tool_id).first()
+    form = EditToolForm()
+    if form.validate_on_submit():
+        
+        tool.name = form.name.data
+        tool.description = form.description.data
+        tool.image_path = form.image_url.data
+        db.session.commit()
+        flash(_('Your changes have been saved.'))
+        return redirect(url_for('main.tools'))
+    elif request.method == 'GET':
+        form.name.data = tool.name
+        form.description.data = tool.description
+        form.image_url.data = tool.image_path
+    return render_template('edit_tool.html', title=_('Edit Tool'),
+                           form=form)
 
 @bp.route('/follow/<username>', methods=['POST'])
 @login_required

@@ -25,7 +25,9 @@
           <div class="card-body">
             <h5 class="card-title">{{ tool.name }}</h5>
             <p class="card-text">{{ tool.description}}</p>
-            <a href="#" class="btn btn-primary">Edit your listing</a>
+            <form method="get" action="{{ url_for('main.edit_tool', tool_id=tool.id) }}">
+                <input class="btn btn-primary" type="submit" name="edit" value="Edit">
+            </form>
             <form method="post" action="{{ url_for('main.delete_tool', tool_id=tool.id) }}">
                 <input class="btn btn-primary" type="submit" name="delete" value="Delete">
             </form>
