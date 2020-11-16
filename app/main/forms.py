@@ -4,6 +4,8 @@ from wtforms import StringField, SubmitField, TextAreaField
 from wtforms.validators import ValidationError, DataRequired, Length
 from flask_babel import _, lazy_gettext as _l
 from app.models import User
+from flask_wtf.file import FileField, FileRequired
+from werkzeug.utils import secure_filename
 
 
 class EditProfileForm(FlaskForm):
@@ -34,13 +36,13 @@ class PostForm(FlaskForm):
 class AddToolForm(FlaskForm):
     name = TextAreaField(_l('Name'), validators=[Length(min=0, max=140)])
     description = TextAreaField(_l('Description'), validators=[Length(max=280)])
-    image_url = TextAreaField(_l('Image URL'), validators=[Length(max=140)])
+    image = FileField(_l('Upload your image'),validators=[FileRequired()]) # IMAGE
     submit = SubmitField(_l('Submit'))
 
 class EditToolForm(FlaskForm):
     name = TextAreaField(_l('Name'), validators=[Length(min=0, max=140)])
     description = TextAreaField(_l('Description'), validators=[Length(max=280)])
-    image_url = TextAreaField(_l('Image URL'), validators=[Length(max=140)])
+    image = TextAreaField(_l('Image URL'), validators=[Length(max=140)])
     submit = SubmitField(_l('Submit'))
 
 class SearchForm(FlaskForm):

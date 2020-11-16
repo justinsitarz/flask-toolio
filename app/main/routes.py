@@ -10,7 +10,11 @@ from app.main.forms import EditProfileForm, EmptyForm, PostForm, SearchForm, \
 from app.models import User, Post, Message, Notification, Tool
 from app.translate import translate
 from app.main import bp
-
+import os
+import boto3, botocore
+from werkzeug.utils import secure_filename
+import uuid
+   
 
 @bp.before_app_request
 def before_request():
@@ -108,14 +112,38 @@ def edit_profile():
 def add_tool():
     form = AddToolForm()
     if form.validate_on_submit():
+        f = form.image.data
+        url = upload_file(f)
         tool = Tool(name=form.name.data, owner=current_user,
                     description=form.description.data,
-                    image_path=form.image_url.data)
+                    image_path=url)
         db.session.add(tool)
         db.session.commit()
         flash(_('Your tool has been listed!'))
         return redirect(url_for('main.tools'))
     return render_template('add_tool.html', title='Add a tool', form=form)
+
+def upload_file(file):
+    if file:
+        file.filename = str(uuid.uuid1())
+        print(file.filename)
+        output = upload_file_to_s3(file, current_app.config["S3_BUCKET"])
+        return str(output)
+    else:
+        return redirect("/tools")
+
+def upload_file_to_s3(file, bucket_name, acl="public-read"):
+    s3 = boto3.client("s3", aws_access_key_id=current_app.config['S3_KEY'],
+        aws_secret_access_key=current_app.config['S3_SECRET']) 
+    try:
+        s3.upload_fileobj(file, bucket_name, file.filename, ExtraArgs={"ACL": acl, 
+            "ContentType": file.content_type})
+    except Exception as e:
+        print("Something Happened: ", e)
+        return e
+
+    return "{}{}".format(current_app.config["S3_LOCATION"], file.filename)
+
 
 @bp.route('/tool/delete/<int:tool_id>', methods=['POST'])
 @login_required
