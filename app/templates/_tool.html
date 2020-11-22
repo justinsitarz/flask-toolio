@@ -1,13 +1,22 @@
-  		<div class="col-sm-6">    
-	        <div class="card" style="width: 18rem;">
-				<img class="card-img-top" src="{{ tool.image_path }}" alt="Card image cap">
-				<div class="card-body">
-					<h5 class="card-title">{{ tool.name }}</h5>
-					<p class="card-text">{{ tool.description }}</p>
-					<a href="#" class="btn btn-primary">Edit tool details</a>
-				</div>	
-			</div>
-		</div>
-
-
-
+      <div class="col-sm-6">
+        <div class="card" style="width: 40rem;">
+          <img class="img-thumbnail" src="{{ tool.image_path }}"d alt="Card image cap">
+          <div class="card-body">
+<!--             <h5 class="card-title">{{ tool.name }}</h5>
+ -->            <p class="card-text">{{ tool.description}}</p>
+	            <div>
+	            	{% set tool_link %}
+	                	<span class="tool_popup" id="{{ tool.id }}">
+	                    	<a href="{{ url_for('main.tool', tool_id=tool.id) }}">
+	                            {{ tool.name }}
+	                        </a>
+	                    </span>
+	                {% endset %}
+	            </div>
+	            {{ _('%(tool)s',tool=tool_link) }}
+            <form method="get" action="{{ url_for('main.tool', tool_id=tool.id) }}">
+                <input class="btn btn-primary" type="submit" value="View">
+            </form>
+          </div>
+        </div>
+      </div>

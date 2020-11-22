@@ -56,14 +56,15 @@ def index():
 @login_required
 def explore():
     page = request.args.get('page', 1, type=int)
-    posts = Post.query.order_by(Post.timestamp.desc()).paginate(
+    tools = Tool.query.filter(Tool.user_id != current_user.id).order_by(Tool.timestamp.desc()).paginate(
         page, current_app.config['POSTS_PER_PAGE'], False)
-    next_url = url_for('main.explore', page=posts.next_num) \
-        if posts.has_next else None
-    prev_url = url_for('main.explore', page=posts.prev_num) \
-        if posts.has_prev else None
-    return render_template('index.html', title=_('Explore'),
-                           posts=posts.items, next_url=next_url,
+    print(tools.items)
+    next_url = url_for('main.explore', page=tools.next_num) \
+        if tools.has_next else None
+    prev_url = url_for('main.explore', page=tools.prev_num) \
+        if tools.has_prev else None
+    return render_template('explore.html', title=_('Explore'),
+                           tools=tools.items, next_url=next_url,
                            prev_url=prev_url)
 
 
@@ -89,6 +90,14 @@ def user_popup(username):
     user = User.query.filter_by(username=username).first_or_404()
     form = EmptyForm()
     return render_template('user_popup.html', user=user, form=form)
+
+
+@bp.route('/tool/<int:tool_id>/popup')
+@login_required
+def tool_popup(tool_id):
+    tool = Tool.query.get_or_404(tool_id)
+    form = EmptyForm()
+    return render_template('tool_popup.html', tool=tool, form=form)
 
 
 @bp.route('/edit_profile', methods=['GET', 'POST'])
@@ -160,18 +169,18 @@ def edit_tool():
     tool_id = 1
     tool = Tool.query.filter_by(id=tool_id).first()
     form = EditToolForm()
-    if form.validate_on_submit():
-        
+    if form.validate_on_submit(): 
+        f = form.image.data
+        url = upload_file(f)       
         tool.name = form.name.data
         tool.description = form.description.data
-        tool.image_path = form.image_url.data
+        tool.image_path = url
         db.session.commit()
         flash(_('Your changes have been saved.'))
         return redirect(url_for('main.tools'))
     elif request.method == 'GET':
         form.name.data = tool.name
         form.description.data = tool.description
-        form.image_url.data = tool.image_path
     return render_template('edit_tool.html', title=_('Edit Tool'),
                            form=form)
 
@@ -260,9 +269,14 @@ def send_message(recipient):
 def tools():
     # Retrieve tools owned by user
     tools = Tool.query.filter_by(user_id=current_user.id)
-    return render_template('tools.html', title='Tools', user=user, tools=tools)
+    return render_template('tools.html', title='Stuff', user=user, tools=tools)
 
 
+@bp.route('/tool/<int:tool_id>', methods=['GET'])
+@login_required
+def tool(tool_id):
+    tool = Tool.query.get_or_404(tool_id)
+    return render_template('tool.html', tool=tool)
 
 @bp.route('/messages')
 @login_required

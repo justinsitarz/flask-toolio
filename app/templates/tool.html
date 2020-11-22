@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block app_content %}
+    <h1>{{ tool.name }}</h1>
+		<div class="col-sm-6">
+			  <img class="img-thumbnail" src="{{ tool.image_path }}"d alt="Card image cap">
+				  <div class="card-body">
+				    <p class="card-text">{{ tool.description}}</p>
+				  </div>
+			</div>
+		</div>
+{% endblock %}

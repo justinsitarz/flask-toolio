@@ -14,14 +14,14 @@
             padding: 15px;
         }
 </style>
-    <h1>{{ _('My tools') }}</h1>
-    <a href="{{ url_for('main.add_tool') }}">Add a new tool</a>
+    <h1>{{ _('My stuff') }}</h1>
+    <a href="{{ url_for('main.add_tool') }}">Add a new thing</a>
     <div class="row">
     <br><br>
     {% for tool in tools %}    
       <div class="col-sm-6">
-        <div class="card">
-          <img class="card-img-top" src="{{ tool.image_path }}"d alt="Card image cap">
+        <div class="card" style="width: 40rem;">
+          <img class="img-thumbnail" src="{{ tool.image_path }}"d alt="Card image cap">
           <div class="card-body">
             <h5 class="card-title">{{ tool.name }}</h5>
             <p class="card-text">{{ tool.description}}</p>
@@ -30,6 +30,9 @@
             </form>
             <form method="post" action="{{ url_for('main.delete_tool', tool_id=tool.id) }}">
                 <input class="btn btn-primary" type="submit" name="delete" value="Delete">
+            </form>
+            <form method="get" action="{{ url_for('main.tool', tool_id=tool.id) }}">
+                <input class="btn btn-primary" value="View">
             </form>
           </div>
         </div>

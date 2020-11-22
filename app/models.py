@@ -104,6 +104,12 @@ class User(UserMixin, PaginatedAPIMixin, db.Model):
         primaryjoin=(followers.c.follower_id == id),
         secondaryjoin=(followers.c.followed_id == id),
         backref=db.backref('followers', lazy='dynamic'), lazy='dynamic')
+    reservation_borrower = db.relationship('Reservation', 
+                                           foreign_keys='Reservation.borrower_id',
+                                           backref='borrower', lazy='dynamic')
+    reservation_lender = db.relationship('Reservation',
+                                         foreign_keys='Reservation.lender_id',
+                                         backref='lender', lazy='dynamic')
     messages_sent = db.relationship('Message',
                                     foreign_keys='Message.sender_id',
                                     backref='author', lazy='dynamic')
@@ -251,6 +257,17 @@ class Post(SearchableMixin, db.Model):
 
     def __repr__(self):
         return '<Post {}>'.format(self.body)
+
+class Reservation(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    borrower_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    lender_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    tool_id = db.Column(db.Integer, db.ForeignKey('tool.id'))
+    start_date = db.Column(db.DateTime())
+    end_date = db.Column(db.DateTime())
+
+    def __repr__(self):
+        return '<Id {}>'.format(self.id)
 
 class Tool(db.Model):
     id = db.Column(db.Integer, primary_key=True)

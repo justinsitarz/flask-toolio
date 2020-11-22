@@ -42,7 +42,7 @@ class AddToolForm(FlaskForm):
 class EditToolForm(FlaskForm):
     name = TextAreaField(_l('Name'), validators=[Length(min=0, max=140)])
     description = TextAreaField(_l('Description'), validators=[Length(max=280)])
-    image = TextAreaField(_l('Image URL'), validators=[Length(max=140)])
+    image = FileField(_l('Upload a new image'),validators=[FileRequired()]) # IMAGE
     submit = SubmitField(_l('Submit'))
 
 class SearchForm(FlaskForm):
